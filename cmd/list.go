@@ -19,10 +19,55 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-package main
+package cmd
 
-import "github.com/mycok/todo_list_client/cmd"
+import (
+	"fmt"
+	"io"
+	"os"
+	"text/tabwriter"
 
-func main() {
-	cmd.Execute()
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+)
+
+// listCmd represents the list command
+var listCmd = &cobra.Command{
+	Use:   "list",
+	Short: "List all todo items",
+	SilenceUsage: true,
+	RunE: func(cmd *cobra.Command, args []string) error {
+		rootURL := viper.GetString("api-root")
+
+		return listAction(os.Stdout, rootURL)
+	},
+}
+
+func listAction(w io.Writer, url string) error {
+	items, err := getAll(url)
+	if err != nil {
+		return err
+	}
+
+	return printResults(w, items)
+}
+
+func printResults(w io.Writer, items []item) error {
+	tw := tabwriter.NewWriter(w, 3, 2, 0, ' ', 0)
+
+	for i, item := range items {
+		done := "𝘅"
+
+		if item.Done {
+			done = "✅"
+		}
+
+		fmt.Fprintf(tw, "%s\t%d\t%s\t\n", done, i + 1, item.Task)
+	}
+
+	return tw.Flush()
+}
+
+func init() {
+	rootCmd.AddCommand(listCmd)
 }
