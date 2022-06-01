@@ -33,8 +33,8 @@ import (
 
 // listCmd represents the list command
 var listCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List all todo items",
+	Use:          "list",
+	Short:        "List All Todo Items",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		rootURL := viper.GetString("api-root")
@@ -45,14 +45,15 @@ var listCmd = &cobra.Command{
 
 func listAction(w io.Writer, url string) error {
 	items, err := getAll(url)
+
 	if err != nil {
 		return err
 	}
 
-	return printResults(w, items)
+	return printItems(w, items)
 }
 
-func printResults(w io.Writer, items []item) error {
+func printItems(w io.Writer, items []item) error {
 	tw := tabwriter.NewWriter(w, 3, 2, 0, ' ', 0)
 
 	for i, item := range items {
@@ -62,7 +63,7 @@ func printResults(w io.Writer, items []item) error {
 			done = "✅"
 		}
 
-		fmt.Fprintf(tw, "%s\t%d\t%s\t\n", done, i + 1, item.Task)
+		fmt.Fprintf(tw, "%s\t%d\t%s\t\n", done, i+1, item.Task)
 	}
 
 	return tw.Flush()
