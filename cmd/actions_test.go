@@ -3,6 +3,7 @@ package cmd
 import (
 	"bytes"
 	"errors"
+	"io"
 	"net/http"
 	"testing"
 )
@@ -151,5 +152,54 @@ func TestViewAction(t *testing.T) {
 				t.Errorf("Expected output: %s\n, but got: %s", tc.expectedOutput, outputBuf.String())
 			}
 		})
+	}
+}
+
+func TestAddAction(t *testing.T) {
+	expectedURLPath := "/todo"
+	expectedMethod := http.MethodPost
+	expectedBody := "{\"task\":\"task 1\"}\n"
+	expectedContentType := "application/json"
+	args := []string{"task", "1"}
+	expectedOutput := "Added task: task 1 : to the list\n"
+
+	url, cleanup := mockServer(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != expectedURLPath {
+			t.Errorf("Expected path: %s, but got: %s instead", expectedURLPath, r.URL.Path)
+		}
+
+		if r.Method != expectedMethod {
+			t.Errorf("Expected http method: %s, but got: %s instead", expectedMethod, r.Method)
+		}
+
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			t.Fatal(err)
+		}
+		r.Body.Close()
+
+		if string(body) != expectedBody {
+			t.Errorf("Expected body: %s, but got: %s instead", expectedBody, string(body))
+		}
+
+		if r.Header.Get("Content-Type") != expectedContentType {
+			t.Errorf("Expected content-type: %s, but got: %s instead", expectedContentType, r.Header.Get("Content-Type"))
+		}
+
+		w.Header().Set("Content-Type", expectedContentType)
+		w.WriteHeader(testResp["created"].Status)
+		w.Write([]byte(testResp["created"].Body))
+	})
+
+	defer cleanup()
+
+	var body bytes.Buffer
+
+	if err := addAction(&body, url, args); err != nil {
+		t.Fatalf("Expected no error, but got: %q instead", err)
+	}
+
+	if expectedOutput != body.String() {
+		t.Errorf("Expected output: %s, but got: %s instead", expectedOutput, body.String())
 	}
 }

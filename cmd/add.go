@@ -33,10 +33,10 @@ import (
 
 // addCmd represents the add command
 var addCmd = &cobra.Command{
-	Use:   "add <taskName>",
-	Short: "Add New Task",
+	Use:          "add <taskName>",
+	Short:        "Add New Task",
 	SilenceUsage: true,
-	Args: cobra.ExactArgs(1),
+	Args:         cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		rootURL := viper.GetString("api-root")
 

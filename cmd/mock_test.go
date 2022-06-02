@@ -54,6 +54,10 @@ var testResp = map[string]struct {
 			"total_results": 0
 		}`,
 	},
+	"created": {
+		Status: http.StatusCreated,
+		Body:   "",
+	},
 	"root": {
 		Status: http.StatusOK,
 		Body:   "Our API is live",
