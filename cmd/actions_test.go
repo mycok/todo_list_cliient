@@ -241,3 +241,37 @@ func TestCompleteAction(t *testing.T) {
 	}
 }
 
+func TestDeleteAction(t *testing.T) {
+	expectedURLPath := "/todo/1"
+	expectedMethod := http.MethodDelete
+	expectedOutput := "Item number 1 deleted from the list\n"
+	arg := "1"
+
+	url, cleanup := mockServer(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != expectedURLPath {
+			t.Fatalf("Expected path: %s, but got: %s instead", expectedURLPath, r.URL.Path)
+		}
+
+		if r.Method != expectedMethod {
+			t.Fatalf("Expected http method: %s, but got: %s instead", expectedMethod, r.Method)
+		}
+
+		w.WriteHeader(testResp["noContent"].Status)
+		w.Write([]byte(testResp["noContent"].Body))
+	})
+
+	defer cleanup()
+
+	var body bytes.Buffer
+
+	if err := deleteAction(&body, url, arg); err != nil {
+		t.Fatalf("Expected no error, but got: %q instead", err)
+	}
+
+	if expectedOutput != body.String() {
+		t.Errorf("Expected output: %s, but got: %s instead", expectedOutput, body.String())
+	}
+}
+
+
+

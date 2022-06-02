@@ -110,6 +110,12 @@ func completeItem(url string, id int) error {
 	return sendMutatingRequest(u, http.MethodPatch, "", http.StatusNoContent, nil)
 }
 
+func deleteItem(url string, id int) error {
+	u := fmt.Sprintf("%s/todo/%d", url, id)
+
+	return sendMutatingRequest(u, http.MethodDelete, "", http.StatusNoContent, nil)
+}
+
 func sendMutatingRequest(url, method, contentType string, statusCode int, body io.Reader) error {
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
