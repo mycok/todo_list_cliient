@@ -34,7 +34,7 @@ import (
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:          "list",
-	Short:        "List All Todo Items",
+	Short:        "List all todo items",
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		rootURL := viper.GetString("api-root")

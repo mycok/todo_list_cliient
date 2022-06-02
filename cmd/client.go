@@ -86,7 +86,7 @@ func getItems(url string) ([]item, error) {
 	return respData.Results, nil
 }
 
-func addItem(url, task string) error {
+func addItem(url, name string) error {
 	u := fmt.Sprintf("%s/todo", url)
 
 	var body bytes.Buffer
@@ -94,7 +94,7 @@ func addItem(url, task string) error {
 	item := struct {
 		Task string `json:"task"`
 	}{
-		Task: task,
+		Task: name,
 	}
 
 	if err := json.NewEncoder(&body).Encode(item); err != nil {
@@ -102,6 +102,12 @@ func addItem(url, task string) error {
 	}
 
 	return sendMutatingRequest(u, http.MethodPost, "application/json", http.StatusCreated, &body)
+}
+
+func completeItem(url string, id int) error {
+	u := fmt.Sprintf("%s/todo/%d?complete", url, id)
+
+	return sendMutatingRequest(u, http.MethodPatch, "", http.StatusNoContent, nil)
 }
 
 func sendMutatingRequest(url, method, contentType string, statusCode int, body io.Reader) error {

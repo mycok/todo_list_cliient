@@ -33,8 +33,8 @@ import (
 
 // addCmd represents the add command
 var addCmd = &cobra.Command{
-	Use:          "add <taskName>",
-	Short:        "Add New Task",
+	Use:          "add <itemName>",
+	Short:        "Add a new item",
 	SilenceUsage: true,
 	Args:         cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -45,17 +45,17 @@ var addCmd = &cobra.Command{
 }
 
 func addAction(w io.Writer, url string, args []string) error {
-	task := strings.Join(args, " ")
+	name := strings.Join(args, " ")
 
-	if err := addItem(url, task); err != nil {
+	if err := addItem(url, name); err != nil {
 		return err
 	}
 
-	return printAddItem(w, task)
+	return printAddedItem(w, name)
 }
 
-func printAddItem(w io.Writer, task string) error {
-	_, err := fmt.Fprintf(w, "Added task: %s : to the list\n", task)
+func printAddedItem(w io.Writer, name string) error {
+	_, err := fmt.Fprintf(w, "Added item: %s : to the list\n", name)
 
 	return err
 }

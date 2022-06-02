@@ -161,15 +161,15 @@ func TestAddAction(t *testing.T) {
 	expectedBody := "{\"task\":\"task 1\"}\n"
 	expectedContentType := "application/json"
 	args := []string{"task", "1"}
-	expectedOutput := "Added task: task 1 : to the list\n"
+	expectedOutput := "Added item: task 1 : to the list\n"
 
 	url, cleanup := mockServer(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != expectedURLPath {
-			t.Errorf("Expected path: %s, but got: %s instead", expectedURLPath, r.URL.Path)
+			t.Fatalf("Expected path: %s, but got: %s instead", expectedURLPath, r.URL.Path)
 		}
 
 		if r.Method != expectedMethod {
-			t.Errorf("Expected http method: %s, but got: %s instead", expectedMethod, r.Method)
+			t.Fatalf("Expected http method: %s, but got: %s instead", expectedMethod, r.Method)
 		}
 
 		body, err := io.ReadAll(r.Body)
@@ -183,7 +183,7 @@ func TestAddAction(t *testing.T) {
 		}
 
 		if r.Header.Get("Content-Type") != expectedContentType {
-			t.Errorf("Expected content-type: %s, but got: %s instead", expectedContentType, r.Header.Get("Content-Type"))
+			t.Fatalf("Expected content-type: %s, but got: %s instead", expectedContentType, r.Header.Get("Content-Type"))
 		}
 
 		w.Header().Set("Content-Type", expectedContentType)
@@ -203,3 +203,41 @@ func TestAddAction(t *testing.T) {
 		t.Errorf("Expected output: %s, but got: %s instead", expectedOutput, body.String())
 	}
 }
+
+func TestCompleteAction(t *testing.T) {
+	expectedURLPath := "/todo/1"
+	expectedMethod := http.MethodPatch
+	expectedQuery := "complete"
+	expectedOutput := "Item number 1 marked as complete\n"
+	arg := "1"
+
+	url, cleanup := mockServer(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != expectedURLPath {
+			t.Fatalf("Expected path: %s, but got: %s instead", expectedURLPath, r.URL.Path)
+		}
+
+		if r.Method != expectedMethod {
+			t.Fatalf("Expected http method: %s, but got: %s instead", expectedMethod, r.Method)
+		}
+
+		if _, ok := r.URL.Query()[expectedQuery]; !ok {
+			t.Fatalf("Expected path query: %s not found in URL", expectedQuery)
+		}
+
+		w.WriteHeader(testResp["noContent"].Status)
+		w.Write([]byte(testResp["noContent"].Body))
+	})
+
+	defer cleanup()
+
+	var body bytes.Buffer
+
+	if err := completeAction(&body, url, arg); err != nil {
+		t.Fatalf("Expected no error, but got: %q instead", err)
+	}
+
+	if expectedOutput != body.String() {
+		t.Errorf("Expected output: %s, but got: %s instead", expectedOutput, body.String())
+	}
+}
+

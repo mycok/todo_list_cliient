@@ -35,7 +35,7 @@ var cfgFile string
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:     "todo_list_client",
-	Short:   "A Todo List API Client",
+	Short:   "A todo list API client",
 	Version: "0.0.1",
 	// Uncomment the following line if your bare application
 	// has an action associated with it:

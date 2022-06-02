@@ -26,57 +26,43 @@ import (
 	"io"
 	"os"
 	"strconv"
-	"text/tabwriter"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-// viewCmd represents the view command
-var viewCmd = &cobra.Command{
-	Use:          "view <itemID>",
-	Short:        "View a specific todo item with details",
+// completeCmd represents the complete command
+var completeCmd = &cobra.Command{
+	Use:   "complete <itemID>",
+	Short: "Mark a todo item as complete",
+	Args: cobra.ExactArgs(1),
 	SilenceUsage: true,
-	Args:         cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		rootURL := viper.GetString("api-root")
 
-		return viewAction(os.Stdout, rootURL, args[0])
+		return completeAction(os.Stdout, rootURL, args[0])
 	},
 }
 
-func viewAction(w io.Writer, url, id string) error {
+func completeAction(w io.Writer, url, id string) error {
 	itemId, err := strconv.Atoi(id)
 	if err != nil {
 		return fmt.Errorf("%w: item ID must me a number", ErrNotNumber)
 	}
 
-	item, err := getItem(url, itemId)
-	if err != nil {
+	if err := completeItem(url, itemId); err != nil {
 		return err
 	}
 
-	return printItem(w, item)
+	return printCompletedItem(w, itemId)
 }
 
-func printItem(w io.Writer, i item) error {
-	tw := tabwriter.NewWriter(w, 14, 2, 0, ' ', 0)
+func printCompletedItem(w io.Writer, id int) error {
+	_, err := fmt.Fprintf(w, "Item number %d marked as complete\n", id)
 
-	fmt.Fprintf(tw, "Task:\t%s\n", i.Task)
-	fmt.Fprintf(tw, "Created at:\t%s\n", i.CreatedAt.Format(timeFormat))
-
-	if i.Done {
-		fmt.Fprintf(tw, "Completed:\t%s\n", "Yes")
-		fmt.Fprintf(tw, "CompletedAt:\t%s\n", i.CompletedAt.Format(timeFormat))
-
-		return tw.Flush()
-	}
-
-	fmt.Fprintf(tw, "Completed:\t%s\n", "No")
-
-	return tw.Flush()
+	return err
 }
 
 func init() {
-	rootCmd.AddCommand(viewCmd)
+	rootCmd.AddCommand(completeCmd)
 }

@@ -58,6 +58,10 @@ var testResp = map[string]struct {
 		Status: http.StatusCreated,
 		Body:   "",
 	},
+	"noContent": {
+		Status: http.StatusNoContent,
+		Body:   "",
+	},
 	"root": {
 		Status: http.StatusOK,
 		Body:   "Our API is live",
