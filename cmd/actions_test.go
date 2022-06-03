@@ -1,3 +1,6 @@
+//go:build !integration
+// +build !integration
+
 package cmd
 
 import (
@@ -59,12 +62,19 @@ func TestListAction(t *testing.T) {
 			// Handle the error path.
 			if tc.expectedErr != nil {
 				if err == nil {
-					t.Fatalf("Expected error: %q, but got no error instead", tc.expectedErr)
+					t.Fatalf(
+						"Expected error: %q, but got no error instead",
+						tc.expectedErr,
+					)
 
 				}
 
 				if !errors.Is(err, tc.expectedErr) {
-					t.Errorf("Expected error: %q, but got: %q instead", tc.expectedErr, err)
+					t.Errorf(
+						"Expected error: %q, but got: %q instead",
+						tc.expectedErr,
+						err,
+					)
 				}
 
 				return
@@ -76,7 +86,11 @@ func TestListAction(t *testing.T) {
 
 			// Handle success path.
 			if tc.expectedOutput != outputBuf.String() {
-				t.Errorf("Expected output: %s, but got: %s", tc.expectedOutput, outputBuf.String())
+				t.Errorf(
+					"Expected output: %s, but got: %s",
+					tc.expectedOutput,
+					outputBuf.String(),
+				)
 			}
 		})
 	}
@@ -119,6 +133,7 @@ func TestViewAction(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
 			url, cleanup := mockServer(func(w http.ResponseWriter, r *http.Request) {
+
 				w.WriteHeader(tc.resp.Status)
 				w.Write([]byte(tc.resp.Body))
 			})
@@ -132,12 +147,19 @@ func TestViewAction(t *testing.T) {
 			// Handle the error path.
 			if tc.expectedErr != nil {
 				if err == nil {
-					t.Fatalf("Expected error: %q, but got no error instead", tc.expectedErr)
+					t.Fatalf(
+						"Expected error: %q, but got no error instead",
+						tc.expectedErr,
+					)
 
 				}
 
 				if !errors.Is(err, tc.expectedErr) {
-					t.Errorf("Expected error: %q, but got: %q instead", tc.expectedErr, err)
+					t.Errorf(
+						"Expected error: %q, but got: %q instead",
+						tc.expectedErr,
+						err,
+					)
 				}
 
 				return
@@ -149,7 +171,11 @@ func TestViewAction(t *testing.T) {
 
 			// Handle success path.
 			if tc.expectedOutput != outputBuf.String() {
-				t.Errorf("Expected output: %s\n, but got: %s", tc.expectedOutput, outputBuf.String())
+				t.Errorf(
+					"Expected output: %s\n, but got: %s",
+					tc.expectedOutput,
+					outputBuf.String(),
+				)
 			}
 		})
 	}
@@ -165,11 +191,19 @@ func TestAddAction(t *testing.T) {
 
 	url, cleanup := mockServer(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != expectedURLPath {
-			t.Fatalf("Expected path: %s, but got: %s instead", expectedURLPath, r.URL.Path)
+			t.Fatalf(
+				"Expected path: %s, but got: %s instead",
+				expectedURLPath,
+				r.URL.Path,
+			)
 		}
 
 		if r.Method != expectedMethod {
-			t.Fatalf("Expected http method: %s, but got: %s instead", expectedMethod, r.Method)
+			t.Fatalf(
+				"Expected http method: %s, but got: %s instead",
+				expectedMethod,
+				r.Method,
+			)
 		}
 
 		body, err := io.ReadAll(r.Body)
@@ -179,11 +213,19 @@ func TestAddAction(t *testing.T) {
 		r.Body.Close()
 
 		if string(body) != expectedBody {
-			t.Errorf("Expected body: %s, but got: %s instead", expectedBody, string(body))
+			t.Errorf(
+				"Expected body: %s, but got: %s instead",
+				expectedBody,
+				string(body),
+			)
 		}
 
 		if r.Header.Get("Content-Type") != expectedContentType {
-			t.Fatalf("Expected content-type: %s, but got: %s instead", expectedContentType, r.Header.Get("Content-Type"))
+			t.Fatalf(
+				"Expected content-type: %s, but got: %s instead",
+				expectedContentType,
+				r.Header.Get("Content-Type"),
+			)
 		}
 
 		w.Header().Set("Content-Type", expectedContentType)
@@ -200,7 +242,11 @@ func TestAddAction(t *testing.T) {
 	}
 
 	if expectedOutput != body.String() {
-		t.Errorf("Expected output: %s, but got: %s instead", expectedOutput, body.String())
+		t.Errorf(
+			"Expected output: %s, but got: %s instead",
+			expectedOutput,
+			body.String(),
+		)
 	}
 }
 
@@ -213,11 +259,19 @@ func TestCompleteAction(t *testing.T) {
 
 	url, cleanup := mockServer(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != expectedURLPath {
-			t.Fatalf("Expected path: %s, but got: %s instead", expectedURLPath, r.URL.Path)
+			t.Fatalf(
+				"Expected path: %s, but got: %s instead",
+				expectedURLPath,
+				r.URL.Path,
+			)
 		}
 
 		if r.Method != expectedMethod {
-			t.Fatalf("Expected http method: %s, but got: %s instead", expectedMethod, r.Method)
+			t.Fatalf(
+				"Expected http method: %s, but got: %s instead",
+				expectedMethod,
+				r.Method,
+			)
 		}
 
 		if _, ok := r.URL.Query()[expectedQuery]; !ok {
@@ -237,7 +291,11 @@ func TestCompleteAction(t *testing.T) {
 	}
 
 	if expectedOutput != body.String() {
-		t.Errorf("Expected output: %s, but got: %s instead", expectedOutput, body.String())
+		t.Errorf(
+			"Expected output: %s, but got: %s instead",
+			expectedOutput,
+			body.String(),
+		)
 	}
 }
 
@@ -249,11 +307,19 @@ func TestDeleteAction(t *testing.T) {
 
 	url, cleanup := mockServer(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != expectedURLPath {
-			t.Fatalf("Expected path: %s, but got: %s instead", expectedURLPath, r.URL.Path)
+			t.Fatalf(
+				"Expected path: %s, but got: %s instead",
+				expectedURLPath,
+				r.URL.Path,
+			)
 		}
 
 		if r.Method != expectedMethod {
-			t.Fatalf("Expected http method: %s, but got: %s instead", expectedMethod, r.Method)
+			t.Fatalf(
+				"Expected http method: %s, but got: %s instead",
+				expectedMethod,
+				r.Method,
+			)
 		}
 
 		w.WriteHeader(testResp["noContent"].Status)
@@ -269,9 +335,10 @@ func TestDeleteAction(t *testing.T) {
 	}
 
 	if expectedOutput != body.String() {
-		t.Errorf("Expected output: %s, but got: %s instead", expectedOutput, body.String())
+		t.Errorf(
+			"Expected output: %s, but got: %s instead",
+			expectedOutput,
+			body.String(),
+		)
 	}
 }
-
-
-

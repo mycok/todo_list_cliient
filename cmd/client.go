@@ -101,22 +101,31 @@ func addItem(url, name string) error {
 		return err
 	}
 
-	return sendMutatingRequest(u, http.MethodPost, "application/json", http.StatusCreated, &body)
+	return sendMutatingRequest(
+		u, http.MethodPost, "application/json", http.StatusCreated, &body,
+	)
 }
 
 func completeItem(url string, id int) error {
 	u := fmt.Sprintf("%s/todo/%d?complete", url, id)
 
-	return sendMutatingRequest(u, http.MethodPatch, "", http.StatusNoContent, nil)
+	return sendMutatingRequest(
+		u, http.MethodPatch, "", http.StatusNoContent, nil,
+	)
 }
 
 func deleteItem(url string, id int) error {
 	u := fmt.Sprintf("%s/todo/%d", url, id)
 
-	return sendMutatingRequest(u, http.MethodDelete, "", http.StatusNoContent, nil)
+	return sendMutatingRequest(
+		u, http.MethodDelete, "", http.StatusNoContent, nil,
+	)
 }
 
-func sendMutatingRequest(url, method, contentType string, statusCode int, body io.Reader) error {
+func sendMutatingRequest(
+	url, method, contentType string, statusCode int, body io.Reader,
+) error {
+
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return err
@@ -126,6 +135,7 @@ func sendMutatingRequest(url, method, contentType string, statusCode int, body i
 		req.Header.Set("Content-Type", contentType)
 	}
 
+	// Send the request.
 	resp, err := newClient().Do(req)
 	if err != nil {
 		return err

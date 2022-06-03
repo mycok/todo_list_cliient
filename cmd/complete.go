@@ -33,9 +33,9 @@ import (
 
 // completeCmd represents the complete command
 var completeCmd = &cobra.Command{
-	Use:   "complete <itemID>",
-	Short: "Mark a todo item as complete",
-	Args: cobra.ExactArgs(1),
+	Use:          "complete <itemID>",
+	Short:        "Mark a todo item as complete",
+	Args:         cobra.ExactArgs(1),
 	SilenceUsage: true,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		rootURL := viper.GetString("api-root")
@@ -45,16 +45,16 @@ var completeCmd = &cobra.Command{
 }
 
 func completeAction(w io.Writer, url, id string) error {
-	itemId, err := strconv.Atoi(id)
+	itemID, err := strconv.Atoi(id)
 	if err != nil {
 		return fmt.Errorf("%w: item ID must me a number", ErrNotNumber)
 	}
 
-	if err := completeItem(url, itemId); err != nil {
+	if err := completeItem(url, itemID); err != nil {
 		return err
 	}
 
-	return printCompletedItem(w, itemId)
+	return printCompletedItem(w, itemID)
 }
 
 func printCompletedItem(w io.Writer, id int) error {

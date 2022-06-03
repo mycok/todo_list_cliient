@@ -33,10 +33,10 @@ import (
 
 // delCmd represents the del command
 var delCmd = &cobra.Command{
-	Use:   "del <itemID>",
-	Short: "Delete a todo item",
+	Use:          "del <itemID>",
+	Short:        "Delete a todo item",
 	SilenceUsage: true,
-	Args: cobra.ExactArgs(1),
+	Args:         cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		rootURL := viper.GetString("api-root")
 
@@ -45,16 +45,16 @@ var delCmd = &cobra.Command{
 }
 
 func deleteAction(w io.Writer, url string, id string) error {
-	itemId, err := strconv.Atoi(id)
+	itemID, err := strconv.Atoi(id)
 	if err != nil {
 		return fmt.Errorf("%w: item ID must me a number", ErrNotNumber)
 	}
 
-	if err := deleteItem(url, itemId); err != nil {
+	if err := deleteItem(url, itemID); err != nil {
 		return err
 	}
 
-	return printDeletedItem(w, itemId)
+	return printDeletedItem(w, itemID)
 }
 
 func printDeletedItem(w io.Writer, id int) error {

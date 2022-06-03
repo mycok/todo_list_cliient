@@ -46,12 +46,12 @@ var viewCmd = &cobra.Command{
 }
 
 func viewAction(w io.Writer, url, id string) error {
-	itemId, err := strconv.Atoi(id)
+	itemID, err := strconv.Atoi(id)
 	if err != nil {
 		return fmt.Errorf("%w: item ID must me a number", ErrNotNumber)
 	}
 
-	item, err := getItem(url, itemId)
+	item, err := getItem(url, itemID)
 	if err != nil {
 		return err
 	}
